@@ -35,7 +35,7 @@ local roomInfo = {
         ["Stairs"] =  true
     },
     ["RareRoom"] = {
-        ["Weight"] = 0.001,
+        ["Weight"] = 0.1,
         ["Direction"] = "Straight",
         ["Stairs"] =  false
     },

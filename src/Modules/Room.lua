@@ -12,25 +12,22 @@ function room.GetRandom(prevRoom)
 	-- local randomRoom = possibleRooms[room.random:NextInteger(1, #possibleRooms)]
 
 
-	-- NEED TO FIND BETER WAY FOR PROBABILITY STUFF
 	local totalWeight = 0
 	for _, info in pairs(room.info) do
 		totalWeight += info.Weight
 	end
 	-- 
-	local randomWeight = room.random:NextInteger(0, totalWeight)
+	local randomWeight = room.random:NextNumber(0, totalWeight)
+	print(randomWeight)
 	local currentWeight = 0
 	local randomRoom = nil
 	for i, info in pairs(room.info) do
 		currentWeight += info.Weight
+		-- why does this algorithm work? need to draw it out
 		if randomWeight <= currentWeight then
 			randomRoom = workspace.Rooms[i]
 			break
 		end
-	end
-	-- print(randomWeight)
-	if randomRoom.Name == "RareRoom" then
-		print(" RAREEEEEEEEEEEEEEEEEEEEEEEEE ")
 	end
 
 
@@ -69,6 +66,8 @@ function room.Generate(prevRoom)
 	newRoom:PivotTo(prevRoom.Exit.CFrame)
 
 	newRoom.Parent = workspace.GeneratedRooms
+	newRoom.Exit.Transparency = 1
+	newRoom.Entrance.Transparency = 1
 
 	return newRoom
 
