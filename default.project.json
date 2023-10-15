@@ -3,15 +3,29 @@
   "tree": {
     "$className": "DataModel",
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     "ReplicatedStorage": {
-      "Shared": {
-        "$path": "src/shared"
+      "Modules": {
+        "$path": "src/Modules"
       }
     },
 
     "ServerScriptService": {
       "Server": {
-        "$path": "src/server"
+        "$path": "src/Server"
       }
     },
 
@@ -22,6 +36,36 @@
         }
       }
     },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     "Workspace": {
       "$properties": {
