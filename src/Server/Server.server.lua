@@ -5,5 +5,4 @@ local prevRoom = workspace.StartRoom
 
 for i=1, 100 do
     prevRoom = room.Generate(prevRoom)
-    print(i)
 end

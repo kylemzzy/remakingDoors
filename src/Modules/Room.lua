@@ -7,9 +7,32 @@ room.lastTurnDirection = nil
 -- prevRoom = previous room to cframe 
 function room.GetRandom(prevRoom)
 	-- get all possible rooms
-	local possibleRooms = workspace.Rooms:GetChildren()
-	-- create a random number between 1 and the number of rooms
-	local randomRoom = possibleRooms[room.random:NextInteger(1, #possibleRooms)]
+	-- local possibleRooms = workspace.Rooms:GetChildren()
+	-- -- create a random number between 1 and the number of rooms
+	-- local randomRoom = possibleRooms[room.random:NextInteger(1, #possibleRooms)]
+
+
+	-- NEED TO FIND BETER WAY FOR PROBABILITY STUFF
+	local totalWeight = 0
+	for _, info in pairs(room.info) do
+		totalWeight += info.Weight
+	end
+	-- 
+	local randomWeight = room.random:NextInteger(0, totalWeight)
+	local currentWeight = 0
+	local randomRoom = nil
+	for i, info in pairs(room.info) do
+		currentWeight += info.Weight
+		if randomWeight <= currentWeight then
+			randomRoom = workspace.Rooms[i]
+			break
+		end
+	end
+	-- print(randomWeight)
+	if randomRoom.Name == "RareRoom" then
+		print(" RAREEEEEEEEEEEEEEEEEEEEEEEEE ")
+	end
+
 
 	-- [1] Next Room must be different from prev
 	-- [2] if turn, we must turn other direction
@@ -21,14 +44,14 @@ function room.GetRandom(prevRoom)
 
 	-- if we have the same room, then recursively call the function to get a new room
 	if (prevRoom.Name == randomRoom.Name) 
-		or (direction and direction == room.lastTurnDirection)
-		or (hasStairs and prevHadStairs) 
+		or direction == room.lastTurnDirection
+		or hasStairs and prevHadStairs
 	then
 		return room.GetRandom(prevRoom)
 	end
 
-	-- clone the model 
-	if direction then
+	--  if direction we are at is turning, then set it 
+	if direction ~= "Straight" then
 		room.lastTurnDirection = direction
 	end
 	return randomRoom
