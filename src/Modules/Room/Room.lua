@@ -1,7 +1,11 @@
+local door = require(script.Parent.Door)
+
 local room = {}
 -- why create an object?
 room.random = Random.new()
+-- with each room instance being created, we want to have its own variables.
 room.info = require(script.Parent.RoomInfo)
+
 room.lastTurnDirection = nil
 -- GetRandom rooms function -- this functions will add edge cases to what rooms can be genned
 -- prevRoom = previous room to cframe 
@@ -64,10 +68,13 @@ function room.Generate(prevRoom)
 	-- when pivoting and not specifying, we need to identify a primary part
 	newRoom.PrimaryPart = newRoom.Entrance
 	newRoom:PivotTo(prevRoom.Exit.CFrame)
-
-	newRoom.Parent = workspace.GeneratedRooms
 	newRoom.Exit.Transparency = 1
 	newRoom.Entrance.Transparency = 1
+
+	local newDoor = door.New(newRoom)
+
+	-- Parent last after adding visual updates
+	newRoom.Parent = workspace.GeneratedRooms
 
 	return newRoom
 
