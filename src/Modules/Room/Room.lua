@@ -1,4 +1,5 @@
 local door = require(script.Parent.Door)
+local furniture = require(script.Parent.Furniture)
 
 local room = {}
 -- why create an object?
@@ -22,7 +23,7 @@ function room.GetRandom(prevRoom)
 	end
 	-- 
 	local randomWeight = room.random:NextNumber(0, totalWeight)
-	print(randomWeight)
+
 	local currentWeight = 0
 	local randomRoom = nil
 	for i, info in pairs(room.info) do
@@ -71,7 +72,8 @@ function room.Generate(prevRoom, number)
 	newRoom.Exit.Transparency = 1
 	newRoom.Entrance.Transparency = 1
 
-	local newDoor = door.New(newRoom, number)
+	furniture.FurnishRoom(newRoom)
+	door.New(newRoom, number)
 
 	-- Parent last after adding visual updates
 	newRoom.Parent = workspace.GeneratedRooms
