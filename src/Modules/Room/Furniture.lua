@@ -5,8 +5,8 @@ function furniture.OpenCloseDrawer(drawer)
     drawer:SetAttribute("Moving", true)
 
     local isOpen = drawer:GetAttribute("Open")
-    -- if its closed set it to 1. 
-    -- if its open set it to -1 
+    -- if its closed set it to -1. 
+    -- if its open set it to 1 
     local direction = isOpen and 1 or -1
 
     local cframe = drawer.CFrame * CFrame.new(0,0,1.5 * direction)
@@ -33,10 +33,16 @@ function furniture.New(template, roomModel)
     local furnitureModel = templateFurnitureModel:Clone()
     -- move the furniture to the red box template in each room
     furnitureModel:PivotTo(template.CFrame)
+
+    -- item spawning within here
+    local itemLocations = {}
+
+
     -- loop through the model to find if there are any drawers
     if furnitureModel:FindFirstChild("Drawers") then
         -- if there are, then loop through each drawer
         for i, drawer in ipairs (furnitureModel.Drawers:GetChildren()) do
+            table.insert(itemLocations, drawer.Location)
             -- define attributes for each object specifically
             drawer:SetAttribute("Open", false)
             drawer:SetAttribute("Moving", false)
@@ -63,14 +69,28 @@ function furniture.New(template, roomModel)
     -- destroy the template for the rooms
     template:Destroy()
 
+    return itemLocations
 end
 function furniture.FurnishRoom(roomModel)
+    -- create a supertable consisting of all the different locations  within the same room to spawn an item
+    local roomItemLocations = {} 
+
     if roomModel:FindFirstChild("Furniture") then
         local templates = roomModel.Furniture:GetChildren()
         for _, part in ipairs(templates) do
             -- for each child in the furniture folder, send to constructor
-            furniture.New(part, roomModel)
+            -- we are given back a table of the attachments list for each drawer in 1 furniture
+            local locations = furniture.New(part, roomModel)
+            -- loop through that table to insert it into ROOM super table
+            if locations then
+                for i, value in ipairs(locations) do
+                    table.insert(roomItemLocations, value)
+                end
+            end
         end
+    end
+    if #roomItemLocations > 0 then
+        return roomItemLocations
     end
 end
 

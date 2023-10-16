@@ -1,5 +1,6 @@
 local door = require(script.Parent.Door)
 local furniture = require(script.Parent.Furniture)
+local item = require(script.Parent.Item)
 
 local room = {}
 -- why create an object?
@@ -72,8 +73,22 @@ function room.Generate(prevRoom, number)
 	newRoom.Exit.Transparency = 1
 	newRoom.Entrance.Transparency = 1
 
-	furniture.FurnishRoom(newRoom)
-	door.New(newRoom, number)
+	local locations = furniture.FurnishRoom(newRoom)
+	local requiresKey = false
+	-- if this room has furniture where we can store keys in
+	if locations then
+		-- randomly generate locks in the room that consist of drawers
+		if room.random:NextInteger(1,3) == 3 then
+			requiresKey = true
+		end
+		local random = room.random:NextInteger(1, #locations)
+		local randomLocation = locations[random]
+		-- only spawn key if need key
+		if requiresKey then
+			item.New(randomLocation, "Key")
+		end
+	end
+	door.New(newRoom, number, requiresKey)
 
 	-- Parent last after adding visual updates
 	newRoom.Parent = workspace.GeneratedRooms

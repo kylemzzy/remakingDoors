@@ -14,23 +14,34 @@ function door.Open(doorModel)
     doorModel.Door.OpenSound:Play()
 end
 
-function door.New(roomModel, number)
+function door.New(roomModel, number, locked)
     local doorModel = workspace.Door:Clone()
 
     doorModel:PivotTo(roomModel.Exit.CFrame)
     -- attributes allow scripters to make our own data type on the part
     doorModel:SetAttribute("Open", false)
     -- add trailing 0's
-    if number < 10 then
-        number = "00" .. number
-    elseif number < 100 then
-        number = "0" .. number
-    end
-    doorModel.Sign.SurfaceGui.TextLabel.Text = number
+    -- %03d meaning
+    -- % - we want to substitute in a value (number in this case )
+    -- 03 - minimum of 3 digits. it autofills trailing 0's
+    -- d - decimal
+    doorModel.Sign.SurfaceGui.TextLabel.Text = string.format("%03d", number)
+    -- if its locked, set it to 0, if its unlocked set it to 1 
+    doorModel.Lock.Transparency = locked and 0 or 1
     doorModel.Sensor.Touched:Connect(function(hit)
         local humanoid = hit.Parent:FindFirstChild("Humanoid")
         if humanoid and not doorModel:GetAttribute("Open") then
-            door.Open(doorModel)
+            if not locked then
+                door.Open(doorModel)
+            elseif humanoid.Parent:FindFirstChild("Key") then
+                doorModel.Lock:Destroy()
+                humanoid.Parent.Key:Destroy()
+                -- play unlock key  here
+                workspace.Sounds.Unlock:Play()
+                -- pause before updating door
+                task.wait(1)
+                door.Open(doorModel)
+            end
         end
     end)
 
