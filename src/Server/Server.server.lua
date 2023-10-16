@@ -4,8 +4,8 @@ local door = require(ReplicatedStorage.Modules.Room.Door)
 
 
 local prevRoom = workspace.StartRoom
-local firstDoor = door.New(prevRoom)
+local firstDoor = door.New(prevRoom, 1)
 
-for i=1, 100 do
-    prevRoom = room.Generate(prevRoom)
+for i=2, 100 do
+    prevRoom = room.Generate(prevRoom, i)
 end

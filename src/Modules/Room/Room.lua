@@ -61,7 +61,7 @@ end
 
 -- Generate rooms function
 -- prevRoom = previous room to set the cframe 
-function room.Generate(prevRoom)
+function room.Generate(prevRoom, number)
 	local randomRoom = room.GetRandom(prevRoom)
 	local newRoom = randomRoom:Clone()
 
@@ -71,7 +71,7 @@ function room.Generate(prevRoom)
 	newRoom.Exit.Transparency = 1
 	newRoom.Entrance.Transparency = 1
 
-	local newDoor = door.New(newRoom)
+	local newDoor = door.New(newRoom, number)
 
 	-- Parent last after adding visual updates
 	newRoom.Parent = workspace.GeneratedRooms
