@@ -1,7 +1,7 @@
 local TweenService = game:GetService("TweenService")
 local furniture = {}
 
-function furniture.OpenDrawer(drawer)
+function furniture.OpenCloseDrawer(drawer)
     drawer:SetAttribute("Moving", true)
 
     local isOpen = drawer:GetAttribute("Open")
@@ -20,37 +20,47 @@ function furniture.OpenDrawer(drawer)
     drawer:SetAttribute("Open", not isOpen)
 end
 
+-- the constructor when we create a new furniture object
+-- pass in a furniture as well as the room
 function furniture.New(template, roomModel)
-    local furnitureModel = workspace.Furniture:FindFirstChild(template.Name)
-
-    if not furnitureModel then
+    -- grab the furniture model
+    local templateFurnitureModel = workspace.Furniture:FindFirstChild(template.Name)
+    -- some rooms dont have it, so if it doesnt exist then dont spawn new furnitures
+    if not templateFurnitureModel then
         return
     end
-
-    furnitureModel = furnitureModel:Clone()
+    -- clone the furniture model from workspace
+    local furnitureModel = templateFurnitureModel:Clone()
+    -- move the furniture to the red box template in each room
     furnitureModel:PivotTo(template.CFrame)
-
+    -- loop through the model to find if there are any drawers
     if furnitureModel:FindFirstChild("Drawers") then
+        -- if there are, then loop through each drawer
         for i, drawer in ipairs (furnitureModel.Drawers:GetChildren()) do
+            -- define attributes for each object specifically
             drawer:SetAttribute("Open", false)
             drawer:SetAttribute("Moving", false)
-
+            -- proximity prompt for interaction 
             local prompt = Instance.new("ProximityPrompt")
+            -- we only want the interact to show up
             prompt.ActionText = ""
             prompt.MaxActivationDistance = 5
+            -- the drawer attachment is the handle for the prompt to show up when players get close
             prompt.Parent = drawer.Attachment
-
+            -- when the player interacts with the prompt via E or left click
             prompt.Triggered:Connect(function()
+                -- if the drawer is not in motion, open or close it
                 if not drawer:GetAttribute("Moving") then
-                    furniture.OpenDrawer(drawer)
+                    furniture.OpenCloseDrawer(drawer)
                 end
             end)
         end
     end
 
 
-
+    -- move the model into the furniture folder for each room
     furnitureModel.Parent = template.Parent
+    -- destroy the template for the rooms
     template:Destroy()
 
 end
