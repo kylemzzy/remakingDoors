@@ -1,4 +1,35 @@
+local TweenService = game:GetService("TweenService")
 local closet = {}
+
+function closet.MoveHinge(hinge, direction)
+    local openAngle = 110
+    local goalCFrame = hinge.CFrame * CFrame.Angles(0, math.rad(openAngle * direction), 0)
+    local doorTween = TweenService:Create(hinge,TweenInfo.new(0.5), {CFrame = goalCFrame})
+    doorTween:Play()
+end
+
+function closet.MoveDoors(model, direction)
+    closet.MoveHinge(model.LeftHinge, 1 * direction)
+    closet.MoveHinge(model.RightHinge, -1 * direction)
+    task.wait(0.5)
+end
+
+function closet.PlayerLeave(player, model)
+    -- get players character 
+    local character = player.Character
+    if not character then return end
+
+    model.hasPlayer.Value = player
+    -- reset
+    closet.MoveDoors(model, -1)
+    -- we look backwards cause the front of the outside part is facing inwards
+    -- we need to change orientation by multiplying y rotation by 180 (flip)
+    character:PivotTo(model.Outside.CFrame * CFrame.Angles(0, math.rad(180), 0))
+    character.Humanoid.WalkSpeed = 16
+    character.Humanoid.JumpPower = 50
+    closet.MoveDoors(model, 1)
+    model.hasPlayer.Value = nil
+end
 
 function closet.PlayerEnter(player, model)
     -- get players character 
@@ -9,8 +40,9 @@ function closet.PlayerEnter(player, model)
     character.Humanoid.WalkSpeed = 0
     character.Humanoid.JumpPower = 0
     character:PivotTo(model.Outside.CFrame)
-    task.wait(1)
+    closet.MoveDoors(model, -1)
     character:PivotTo(model.Inside.CFrame)
+    closet.MoveDoors(model, 1)
 end
 
 function closet.New(template)
@@ -30,11 +62,29 @@ function closet.New(template)
     outsidePrompt.MaxActivationDistance = 5
     outsidePrompt.Parent = model.Outside
 
+    local insidePrompt = Instance.new("ProximityPrompt")
+    insidePrompt.ActionText = ""
+    insidePrompt.MaxActivationDistance = 2
+    insidePrompt.Parent = model.InsidePrompt
+
+    local sound = workspace.Sounds.OpenDoorSound
+
     outsidePrompt.Triggered:Connect(function(playerWhoTriggered)
         -- if no player is in here
         if hasPlayer.Value == nil then
             outsidePrompt.Enabled = false
+            sound:Play()
             closet.PlayerEnter(playerWhoTriggered, model)
+        end
+    end)
+
+    insidePrompt.Triggered:Connect(function(playerWhoTriggered)
+        if hasPlayer.Value == playerWhoTriggered then
+            insidePrompt.Enabled = false
+            sound:Play()
+            closet.PlayerLeave(playerWhoTriggered, model)
+            insidePrompt.Enabled = true
+            outsidePrompt.Enabled = true
         end
     end)
     template:Destroy()
