@@ -1,4 +1,9 @@
 local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Events = ReplicatedStorage:WaitForChild("Events")
+local closetCameraEvent = Events:WaitForChild("ClosetCamera")
+
 local closet = {}
 
 function closet.MoveHinge(hinge, direction)
@@ -11,7 +16,9 @@ end
 function closet.MoveDoors(model, direction)
     closet.MoveHinge(model.LeftHinge, 1 * direction)
     closet.MoveHinge(model.RightHinge, -1 * direction)
-    task.wait(0.5)
+    -- be careful with the wait, tween will overlap when doors close if the wait is not appropriate time
+    -- causing weirdness
+    task.wait(.5)
 end
 
 function closet.PlayerLeave(player, model)
@@ -40,8 +47,10 @@ function closet.PlayerEnter(player, model)
     character.Humanoid.WalkSpeed = 0
     character.Humanoid.JumpPower = 0
     character:PivotTo(model.Outside.CFrame)
+    closetCameraEvent:FireClient(player, model.Outside.CFrame)
     closet.MoveDoors(model, -1)
     character:PivotTo(model.Inside.CFrame)
+    closetCameraEvent:FireClient(player, model.Inside.CFrame)
     closet.MoveDoors(model, 1)
 end
 
