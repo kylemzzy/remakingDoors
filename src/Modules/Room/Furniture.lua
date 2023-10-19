@@ -1,4 +1,5 @@
 local TweenService = game:GetService("TweenService")
+local closet = require(script.Parent.Closet)
 local furniture = {}
 
 function furniture.OpenCloseDrawer(drawer)
@@ -78,6 +79,12 @@ function furniture.FurnishRoom(roomModel)
     if roomModel:FindFirstChild("Furniture") then
         local templates = roomModel.Furniture:GetChildren()
         for _, part in ipairs(templates) do
+            -- we need our own if statement for closets because it wont have drawers that
+            -- we need to look for room locations in
+            if part.Name == "Closet" then
+                closet.New(part)
+                continue
+            end
             -- for each child in the furniture folder, send to constructor
             -- we are given back a table of the attachments list for each drawer in 1 furniture
             local locations = furniture.New(part, roomModel)
