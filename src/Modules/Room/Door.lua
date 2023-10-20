@@ -15,6 +15,11 @@ function door.Open(doorModel, number)
     doorTween:Play()
     doorModel.Door.OpenSound:Play()
     playerEnter:Fire(number)
+    local rand = math.random(1,15)
+    print(rand)
+    if rand ~= 2 then return end
+    task.wait(1)
+    workspace.Sounds.CreepyLaugh:Play()
 end
 
 function door.New(roomModel, number, locked)
@@ -45,6 +50,9 @@ function door.New(roomModel, number, locked)
                 task.wait(1)
                 door.Open(doorModel, number)
             end
+            
+            
+
         end
     end)
 

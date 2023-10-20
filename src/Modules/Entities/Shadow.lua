@@ -41,7 +41,7 @@ function shadow.LerpTo(model, target)
     -- percentage at which the model is relative to the target
     local alpha = 0
     -- speed in which we want to ghost to move to
-    local speed = 60
+    local speed = 70
 
     local distance = (model.PrimaryPart.Position - target.Position).Magnitude
 

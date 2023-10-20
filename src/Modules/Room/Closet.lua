@@ -55,7 +55,6 @@ function closet.PlayerEnter(player, model)
 end
 
 function closet.New(template)
-    print("CLOSET HI")
     local model = workspace.Furniture.Closet:Clone()
     model:PivotTo(template.CFrame)
     model.Parent = template.Parent

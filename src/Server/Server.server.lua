@@ -21,7 +21,7 @@ for i=2, 100 do
 end
 
 playerEnter.Event:Connect(function(number)
-    print(number)
+    -- print(number)
     -- every 4 rooms
     if number % 4 == 0 then
         -- spawn in monster
@@ -31,7 +31,7 @@ playerEnter.Event:Connect(function(number)
         workspace.Sounds.Flicker:Play()
         room.Blackout(generatedRooms[number])
         room.Blackout(generatedRooms[number+1])
-        task.wait(1)
+        task.wait(.2)
         shadow.New(number, generatedRooms)
     end
 end)

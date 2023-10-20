@@ -16,10 +16,11 @@ DeathRemote.OnClientEvent:Connect(function()
     local laugh = workspace.Sounds.CreepyLaugh
     -- 50 % chance of it popping up instant, else math.random
     local rand = math.random(1,3)
-    print(rand)
+    -- print(rand)
     if rand ~= 2 then
+        task.wait(1)
         laugh:Play()
-        rand = math.random(1,3)
+        rand = math.random(2,5)
         task.wait(rand)
         laugh:Stop()
     end
