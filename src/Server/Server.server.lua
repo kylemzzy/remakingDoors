@@ -23,12 +23,15 @@ end
 playerEnter.Event:Connect(function(number)
     print(number)
     -- every 4 rooms
-    if number % 3 == 0 then
+    if number % 4 == 0 then
         -- spawn in monster
+        -- 50 percent change of spawning 
+        local rand = math.random(2)
+        if rand == 2 then return end
         workspace.Sounds.Flicker:Play()
         room.Blackout(generatedRooms[number])
         room.Blackout(generatedRooms[number+1])
-        task.wait(2)
+        task.wait(1)
         shadow.New(number, generatedRooms)
     end
 end)

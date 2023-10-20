@@ -30,11 +30,18 @@
     },
 
     "StarterPlayer": {
+      
       "StarterPlayerScripts": {
         "Client": {
           "$path": "src/client"
         }
+      },
+      "StarterCharacterScripts": {
+        "Client": {
+          "$path": "src/characterClient"
+        }
       }
+      
     },
 
 
@@ -102,7 +109,7 @@
           0
         ],
         "Brightness": 2,
-        "GlobalShadows": false,
+        "GlobalShadows": true,
         "Outlines": false,
         "Technology": "Voxel"
       }

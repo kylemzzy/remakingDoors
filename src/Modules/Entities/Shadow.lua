@@ -2,6 +2,8 @@ local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
+local DeathRemote = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Death")
+
 local shadow = {}
 
 function shadow.FindPlayers(model)
@@ -27,6 +29,8 @@ function shadow.FindPlayers(model)
                 if hit == obj or hit:FindFirstAncestor(obj.Parent.Name) then
                     print("HIT")
                     obj.Parent.Humanoid.Health = 0
+                    -- proceed death screen here
+                    DeathRemote:FireClient(Players:GetPlayerFromCharacter(obj.Parent))
                 end
             end
         end
@@ -83,7 +87,7 @@ end
 function shadow.New(number, generatedRooms)
     local enemyModel = workspace.Enemies.Shadow:Clone()
 
-    local prevNum = number - 1
+    local prevNum = number - 2
     local maxNum = number + 2
     local prevRoom = generatedRooms[prevNum]
     -- if we want shadow to appear before room 3, we need an edge case for prevNumber going before stawrtRoom
