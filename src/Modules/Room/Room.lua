@@ -78,7 +78,7 @@ function room.Generate(prevRoom, number)
 	-- if this room has furniture where we can store keys in
 	if locations then
 		-- randomly generate locks in the room that consist of drawers
-		if room.random:NextInteger(1,3) == 3 then
+		if room.random:NextInteger(1,10) == 3 then
 			requiresKey = true
 		end
 		local random = room.random:NextInteger(1, #locations)

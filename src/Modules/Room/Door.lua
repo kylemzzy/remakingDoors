@@ -1,9 +1,11 @@
 local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local playerEnter = ReplicatedStorage:WaitForChild("Bindables"):WaitForChild("PlayerEnterRoom")
 
 local door = {}
 
 
-function door.Open(doorModel)
+function door.Open(doorModel, number)
     doorModel:SetAttribute("Open", true)
 
     -- we will tween here
@@ -12,6 +14,7 @@ function door.Open(doorModel)
 
     doorTween:Play()
     doorModel.Door.OpenSound:Play()
+    playerEnter:Fire(number)
 end
 
 function door.New(roomModel, number, locked)
@@ -32,7 +35,7 @@ function door.New(roomModel, number, locked)
         local humanoid = hit.Parent:FindFirstChild("Humanoid")
         if humanoid and not doorModel:GetAttribute("Open") then
             if not locked then
-                door.Open(doorModel)
+                door.Open(doorModel, number)
             elseif humanoid.Parent:FindFirstChild("Key") then
                 doorModel.Lock:Destroy()
                 humanoid.Parent.Key:Destroy()
@@ -40,7 +43,7 @@ function door.New(roomModel, number, locked)
                 workspace.Sounds.Unlock:Play()
                 -- pause before updating door
                 task.wait(1)
-                door.Open(doorModel)
+                door.Open(doorModel, number)
             end
         end
     end)
