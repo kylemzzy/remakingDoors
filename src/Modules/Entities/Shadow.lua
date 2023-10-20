@@ -5,19 +5,39 @@ local Players = game:GetService("Players")
 local shadow = {}
 
 function shadow.FindPlayers(model)
-    -- local players = Players:GetPlayers()
-    -- local characters = {}
-    -- for i, player in ipairs(players) do
-        
-    -- end
-    
+    local players = Players:GetPlayers()
+    local characters = {}
+    for i, player in ipairs(players) do
+        if player.Character then
+            table.insert(characters, player.Character)
+        end
+    end
+    local overlapParams = OverlapParams.new()
+    -- Whitelist is deprecated
+    overlapParams.FilterType = Enum.RaycastFilterType.Include
+    overlapParams.FilterDescendantsInstances = characters
+    local collisions = workspace:GetPartsInPart(model.Smoke)
+
+    for index, obj in ipairs(collisions) do
+        if obj.Name == "HumanoidRootPart" then
+            local rayDirection = obj.Position - model.Skull.Position
+            local result = workspace:Raycast(model.Skull.Position, rayDirection)
+            if result and result.Instance then
+                local hit = result.Instance
+                if hit == obj or hit:FindFirstAncestor(obj.Parent.Name) then
+                    print("HIT")
+                    obj.Parent.Humanoid.Health = 0
+                end
+            end
+        end
+    end
 end
 
 function shadow.LerpTo(model, target)
     -- percentage at which the model is relative to the target
     local alpha = 0
     -- speed in which we want to ghost to move to
-    local speed = 50
+    local speed = 60
 
     local distance = (model.PrimaryPart.Position - target.Position).Magnitude
 
@@ -66,7 +86,7 @@ function shadow.New(number, generatedRooms)
     local prevNum = number - 1
     local maxNum = number + 2
     local prevRoom = generatedRooms[prevNum]
-    -- if we want shadow to appear before room 3, we need an edge case for prevNumber going before startRoom
+    -- if we want shadow to appear before room 3, we need an edge case for prevNumber going before stawrtRoom
     -- if maxNum is out of bounds
     if not generatedRooms[maxNum] then
         maxNum = #generatedRooms
@@ -75,8 +95,11 @@ function shadow.New(number, generatedRooms)
 
     enemyModel:PivotTo(prevRoom.Entrance.CFrame)
     enemyModel.Parent = workspace
-
+    
+    enemyModel.Skull.RushActive:Play()
     shadow.Navigate(enemyModel, prevNum, maxNum, generatedRooms)
+    enemyModel.Skull.RushDespawn:Play()
+    enemyModel.Skull.RushActive:Stop()
     enemyModel:Destroy()
 end
 

@@ -25,6 +25,10 @@ playerEnter.Event:Connect(function(number)
     -- every 4 rooms
     if number % 3 == 0 then
         -- spawn in monster
+        workspace.Sounds.Flicker:Play()
+        room.Blackout(generatedRooms[number])
+        room.Blackout(generatedRooms[number+1])
+        task.wait(2)
         shadow.New(number, generatedRooms)
     end
 end)

@@ -1,3 +1,5 @@
+local TweenService = game:GetService("TweenService")
+
 local door = require(script.Parent.Door)
 local furniture = require(script.Parent.Furniture)
 local item = require(script.Parent.Item)
@@ -9,6 +11,32 @@ room.random = Random.new()
 room.info = require(script.Parent.RoomInfo)
 
 room.lastTurnDirection = nil
+
+function room.Flicker(lightPart)
+	local info = TweenInfo.new(0.2, Enum.EasingStyle.Elastic, Enum.EasingDirection.InOut, 1, false)
+	local flickOn = TweenService:Create(lightPart, info, {Brightness = 1})
+	local flickOff = TweenService:Create(lightPart, info, {Brightness = 0})
+	flickOff:Play()
+	flickOff.Completed:Wait()
+
+	flickOn:Play()
+	flickOn.Completed:Wait()
+
+	flickOff:Play()
+	flickOff.Completed:Wait()
+end
+
+function room.Blackout(roomModel)
+	local lamps = roomModel.Lamps:GetChildren()
+	for i, lamp in ipairs(lamps) do
+		for j, obj in ipairs(lamp:GetChildren()) do
+			task.spawn(function()
+				room.Flicker(obj)
+			end)
+		end
+	end
+end
+
 -- GetRandom rooms function -- this functions will add edge cases to what rooms can be genned
 -- prevRoom = previous room to cframe 
 function room.GetRandom(prevRoom)
